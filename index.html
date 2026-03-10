@@ -3,239 +3,662 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FBI/SWAT MESA TERMINAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <title>FBI TERMINAL • MESA</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00d4ff;
-            --bg: #03070b;
-            --card-bg: rgba(16, 23, 36, 0.9);
-            --border: rgba(0, 212, 255, 0.2);
+            --primary: #00f2ff;
+            --accent: #ff004c;
+            --bg: #05080a;
+            --card-bg: rgba(10, 15, 20, 0.95);
+            --border: rgba(0, 242, 255, 0.3);
+            --text: #e0e6ed;
+            --success: #00ff88;
         }
 
-        body {
-            background: var(--bg);
-            color: #d1d9e0;
-            font-family: 'Roboto Mono', monospace;
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
             margin: 0;
             padding: 0;
-            background-image: linear-gradient(to bottom, #050a12, #000);
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #0a1520 0%, #05080a 100%);
+            min-height: 100vh;
+        }
+
+        /* Кибер-эффекты */
+        .glitch {
+            position: relative;
+            text-shadow: 0.05em 0 0 rgba(255,0,0,0.3), -0.05em -0.025em 0 rgba(0,255,255,0.3);
+            animation: glitch 6s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: none; opacity: 1; }
+            7% { transform: skew(-0.5deg, -0.9deg); opacity: 0.75; }
+            10% { transform: none; opacity: 1; }
         }
 
         header {
-            padding: 25px;
+            padding: 20px 15px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
-            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            position: relative;
+            background: linear-gradient(180deg, rgba(0,242,255,0.1) 0%, transparent 100%);
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
             margin: 0;
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
             font-size: 1.4rem;
+            letter-spacing: 4px;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
         }
 
-        .search-container {
+        .subtitle {
+            font-size: 0.7rem;
+            color: #8899aa;
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+
+        .search-box {
             padding: 15px;
             position: sticky;
             top: 0;
-            background: var(--bg);
-            z-index: 10;
+            background: rgba(5, 8, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
         }
 
-        #searchInput {
+        #search {
             width: 100%;
-            padding: 14px;
-            background: #0d1117;
+            padding: 15px;
+            background: #000;
             border: 1px solid var(--border);
-            border-radius: 4px;
-            color: #fff;
+            border-radius: 8px;
+            color: var(--primary);
             font-family: inherit;
-            box-sizing: border-box;
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .container { padding: 10px; max-width: 900px; margin: auto; }
+        #search:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
 
-        .section-title {
-            font-family: 'Orbitron';
+        .tabs {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            padding: 8px 15px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: #8899aa;
+            white-space: nowrap;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
-            color: #586069;
-            margin: 20px 0 10px 5px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 15px;
+            padding-bottom: 50px;
         }
 
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 2px;
-            margin-bottom: 8px;
-            transition: 0.2s;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card-header {
             padding: 15px;
-            cursor: pointer;
+            background: linear-gradient(90deg, rgba(0,242,255,0.15), transparent);
+            font-weight: bold;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 500;
-            background: rgba(0, 212, 255, 0.03);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
         }
 
-        .card-header:hover { background: rgba(0, 212, 255, 0.08); }
-
-        .card-content {
-            display: none;
-            padding: 20px;
-            border-top: 1px solid var(--border);
+        .card-body {
+            padding: 15px;
             font-size: 0.85rem;
-            line-height: 1.6;
-            background: rgba(0, 0, 0, 0.3);
+            line-height: 1.8;
         }
 
-        .card.active .card-content { display: block; }
+        .code-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
 
-        .tag { color: var(--primary); font-weight: bold; margin-right: 10px; }
-        
-        .sub-header { color: var(--primary); border-bottom: 1px solid var(--border); margin-top: 15px; padding-bottom: 5px; font-weight: bold; }
+        .code-item {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary);
+        }
 
-        .flex-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 4px 0; }
+        .code-val {
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: block;
+        }
 
-        ul { padding-left: 20px; }
-        li { margin-bottom: 5px; }
+        .code-desc {
+            color: #8899aa;
+            font-size: 0.75rem;
+        }
 
-        .footer { text-align: center; padding: 30px; font-size: 0.6rem; color: #444; }
+        .tactics-img {
+            width: 100%;
+            height: 150px;
+            background: #111;
+            margin: 10px 0;
+            border: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #444;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tactics-img::before {
+            content: "⚔️ TACTICAL MAP";
+            position: absolute;
+            opacity: 0.5;
+        }
+
+        .tag {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.5);
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: #8899aa;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .blink {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        li::before {
+            content: "▹";
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(0,242,255,0.2);
+            border: 1px solid var(--primary);
+            border-radius: 3px;
+            font-size: 0.65rem;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>CENTRAL DATABASE :: MESA</h1>
-    <div style="font-size: 0.7rem; color: var(--primary); margin-top: 5px; opacity: 0.7;">REGIONAL OFFICE FBI & SWAT ACCESS ONLY</div>
+    <h1 class="glitch">FBI • MESA TERMINAL</h1>
+    <div class="subtitle">SECURE • ENCRYPTED • v.2025</div>
 </header>
 
-<div class="search-container">
-    <input type="text" id="searchInput" placeholder="Введите запрос (код, тактика, устав)..." onkeyup="filter()">
+<div class="search-box">
+    <input type="text" id="search" placeholder="🔍 ПОИСК: код, тактика, устав..." oninput="filterContent()">
 </div>
 
-<div class="container">
-    
-    <div class="section-title">Common Protocols</div>
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('all')">📊 ВСЕ</button>
+    <button class="tab-btn" onclick="switchTab('codes')">📟 КОДЫ</button>
+    <button class="tab-btn" onclick="switchTab('tactics')">⚔️ ТАКТИКА</button>
+    <button class="tab-btn" onclick="switchTab('rules')">📜 УСТАВ</button>
+    <button class="tab-btn" onclick="switchTab('departments')">🏢 ОТДЕЛЫ</button>
+    <button class="tab-btn" onclick="switchTab('fleet')">🚗 АВТОПАРК</button>
+</div>
 
-    <div class="card" data-tags="коды тен тэн ситуации">
-        <div class="card-header" onclick="toggle(this)">📟 ТЕН-КОДЫ И МАРКИРОВКИ <span>[+]</span></div>
-        <div class="card-content">
-            <div class="flex-row"><span class="tag">10-1</span><span>Встреча всех юнитов</span></div>
-            <div class="flex-row"><span class="tag">10-4</span><span>Сообщение принято</span></div>
-            <div class="flex-row"><span class="tag">10-6</span><span>Занят (не принимаю вызовы)</span></div>
-            <div class="flex-row"><span class="tag">10-15</span><span>Подозреваемый задержан</span></div>
-            <div class="flex-row"><span class="tag">10-20</span><span>Локация</span></div>
-            <div class="flex-row"><span class="tag">10-21</span><span>Запрос статуса юнита</span></div>
-            <div class="flex-row"><span class="tag">10-57 V/F</span><span>Погоня (Vehicle / Foot)</span></div>
-            <div class="flex-row"><span class="tag">10-70</span><span>Запрос поддержки (Back-up)</span></div>
-            <div class="flex-row"><span class="tag">10-99</span><span>Ситуация урегулирована</span></div>
-            <div class="sub-header">Ситуационные коды</div>
-            <div class="flex-row"><span class="tag">CODE 2</span><span>Срочный вызов (без сирен)</span></div>
-            <div class="flex-row"><span class="tag">CODE 3</span><span>Экстренный вызов (сирены+свет)</span></div>
-            <div class="flex-row"><span class="tag">CODE 4</span><span>Помощь не требуется</span></div>
+<div class="content" id="mainContent">
+    <!-- ИНФОРМАЦИЯ -->
+    <div class="card" data-category="info" data-search="информация о разделе faq">
+        <div class="card-header">
+            <span>📋 ИНФОРМАЦИЯ О РАЗДЕЛЕ</span>
+            <span class="tag">2025</span>
+        </div>
+        <div class="card-body">
+            Актуальная информация по Федеральному Бюро Расследований штата Меса. Все данные верифицированы и соответствуют внутренним регламентам 2025 года.
         </div>
     </div>
 
-    <div class="section-title">S.W.A.T. Section</div>
-
-    <div class="card" data-tags="сват swat тактика штурм зачистка крючок крест">
-        <div class="card-header" onclick="toggle(this)">⚔️ ТАКТИКА ШТУРМА И ЗАЧИСТКИ <span>[+]</span></div>
-        <div class="card-content">
-            <div class="sub-header">Методы проникновения</div>
-            <p><b>«Крючок»:</b> Применяется при широких дверях. Бойцы одновременно заходят, пригибаясь и контролируя свои углы.</p>
-            <p><b>«Крест»:</b> Бойцы входят один за другим по диагонали, «зачищая» мертвые зоны почти одновременно.</p>
-            <p><b>«Угол»:</b> №1 выбирает направление, №2 подстраивается под него.</p>
-            <div class="sub-header">Перемещение</div>
-            <p><b>«Лист клевера»:</b> Треугольный строй (Лидер + 2 партнера). Оси визирования пересекаются, секторы огня накладываются.</p>
-            <p><b>«Растекание»:</b> Бойцы распределяются вдоль стен помещения для полного контроля.</p>
-            <p><b>Работа со щитом:</b> Группа до 5 человек следует за щитовиком с минимальной дистанцией.</p>
+    <!-- ВНУТРЕННИЕ ИНСТРУКЦИИ -->
+    <div class="card" data-category="rules" data-search="инструкции правила запреты разрешено">
+        <div class="card-header">
+            <span>📋 ВНУТРЕННИЕ ИНСТРУКЦИИ</span>
+            <span class="tag">ОСНОВНОЕ</span>
         </div>
-    </div>
-
-    <div class="card" data-tags="переговоры заложники сват swat">
-        <div class="card-header" onclick="toggle(this)">🎤 ПЕРЕГОВОРЫ ПРИ ЗАХВАТЕ <span>[+]</span></div>
-        <div class="card-content">
-            <p><b>Цели:</b> Сохранение жизни заложников, получение инфо о преступниках, выигрыш времени.</p>
-            <div class="sub-header">Этапы:</div>
+        <div class="card-body">
             <ul>
-                <li>Обобщение информации и установление контакта.</li>
-                <li>«Захват позиций» (психологическое воздействие).</li>
-                <li>Торг и обсуждение условий.</li>
-                <li>Достижение соглашения / Анализ.</li>
+                <li><b>Глава 1:</b> Инструкции обязательны для всех</li>
+                <li><b>Глава 2:</b> Обеспечение безопасности, пресечение "укроп"-трафика</li>
+                <li><b>Глава 3:</b> Запрет на связи с ОПГ, маскировку в личных целях</li>
+                <li><b>Глава 4:</b> Разрешено использовать форму SWAT, запрашивать ордера</li>
+                <li><b>Глава 5:</b> Право на обыск перед выдачей пропуска</li>
             </ul>
         </div>
     </div>
 
-    <div class="section-title">FBI Section</div>
+    <!-- ПОВЫШЕНИЕ -->
+    <div class="card" data-category="rules" data-search="повышение ранг стажер агент">
+        <div class="card-header">
+            <span>📈 ПРОЦЕСС ПОВЫШЕНИЯ</span>
+        </div>
+        <div class="card-body">
+            <div class="code-item">Стажер [1] → Испытательный [2]</div>
+            <div class="code-item">Испытательный [2] → Младший [3]</div>
+            <div class="code-item">Младший [3] → Агент [4]</div>
+            <div class="code-item">Агент [4] → Старший [5]</div>
+            <div class="code-item">Старший [5] → Специальный [6]</div>
+            <div class="code-item">Специальный [6] → Зам.главы [7]</div>
+            <div class="code-item">Зам.главы [7] → Глава [8]</div>
+            <div class="code-item">Глава [8] → Зам.директора [9]</div>
+            <div class="code-item">Зам.директора [9] → Директор [10]</div>
+        </div>
+    </div>
 
-    <div class="card" data-tags="устав фбр правила обязанности права">
-        <div class="card-header" onclick="toggle(this)">🛡️ ВНУТРЕННИЙ УСТАВ FBI <span>[+]</span></div>
-        <div class="card-content">
-            <div class="sub-header">Общие запреты</div>
+    <!-- ОТДЕЛЫ -->
+    <div class="card" data-category="departments" data-search="отделы rb cid opr nsb swat hbr">
+        <div class="card-header">
+            <span>🏢 ОТДЕЛЫ ФБР</span>
+        </div>
+        <div class="card-body">
             <ul>
-                <li>Связи с преступными группировками.</li>
-                <li>Нахождение на ЦР/АБ/Казино в форме (кроме рейдов).</li>
-                <li>Неадекватное поведение, использование мата.</li>
-                <li>Хранение/сбыт запрещенных веществ.</li>
+                <li><b>RB</b> - Recruiting Branch (подготовка)</li>
+                <li><b>OPR</b> - Контроль сотрудников</li>
+                <li><b>CID</b> - Расследование преступлений</li>
+                <li><b>NSB</b> - Нац. безопасность</li>
+                <li><b>SWAT</b> - Спецоперации</li>
+                <li><b>HBR</b> - Кадры и внедрения</li>
             </ul>
-            <div class="sub-header">Субординация</div>
-            <p>Агент обязан беспрекословно выполнять приказы руководства (Директор, Зам, Куратор). Младший состав подчиняется старшему.</p>
         </div>
     </div>
 
-    <div class="card" data-tags="ранги должности сват swat">
-        <div class="card-header" onclick="toggle(this)">📊 ИЕРАРХИЯ (SWAT/FBI) <span>[+]</span></div>
-        <div class="card-content">
-            <div class="sub-header">Структура S.W.A.T.</div>
-            <div class="flex-row"><span>Куратор SWAT</span><span class="tag">TOP</span></div>
-            <div class="flex-row"><span>Зам. Куратора</span><span></span></div>
-            <div class="flex-row"><span>Старший инструктор</span><span></span></div>
-            <div class="flex-row"><span>Оператор</span><span></span></div>
-            <div class="flex-row"><span>Академист</span><span></span></div>
-            <div class="sub-header">Отделы FBI</div>
-            <p><b>CID:</b> Криминальный следственный отдел.</p>
-            <p><b>OPR:</b> Отдел профессиональной ответственности (инспекции).</p>
-            <p><b>NSB:</b> Совет национальной безопасности.</p>
+    <!-- ИЕРАРХИЯ -->
+    <div class="card" data-category="rules" data-search="иерархия подчинение директор">
+        <div class="card-header">
+            <span>📊 ИЕРАРХИЯ ПОДЧИНЕНИЯ</span>
+        </div>
+        <div class="card-body">
+            Директор [10] → Зам.директора [9] → Главы отделов [8] → Зам.глав [7] → Спец.агенты [6] → Старшие [5] → Агенты [4] → Младшие [3] → Испытательные [2] → Стажеры [1]
         </div>
     </div>
 
+    <!-- ВЫГОВОРЫ -->
+    <div class="card" data-category="rules" data-search="выговор увольнение gwarn dismiss demoute">
+        <div class="card-header">
+            <span>⚠️ ВЫГОВОРЫ И УВОЛЬНЕНИЯ</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>/gwarn</b> - спецвыговор (с 6 ранга)</li>
+                <li><b>/dismiss</b> - увольнение до 4 ранга</li>
+                <li><b>/demoute</b> - увольнение 5+ (только руководство)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- АВТОПАРК -->
+    <div class="card" data-category="fleet" data-search="автопарк машина cadillac dodge mustang corvette maverick">
+        <div class="card-header">
+            <span>🚗 АВТОПАРК</span>
+        </div>
+        <div class="card-body">
+            <div class="code-item">Cadillac Escalade - Испытательный [2]</div>
+            <div class="code-item">Toyota Land Cruiser - Младший [3]</div>
+            <div class="code-item">Dodge Charger - Старший [5]</div>
+            <div class="code-item">Enforcer - Старший [5]</div>
+            <div class="code-item">Mustang RTR - Зам.Старшего [5]</div>
+            <div class="code-item">Corvette C8 - Зам.Специального [6]</div>
+            <div class="code-item">FBI Maverick - Глава отдела [8]</div>
+        </div>
+    </div>
+
+    <!-- МАСКИРОВКА -->
+    <div class="card" data-category="tactics" data-search="маскировка прикрытие внедрение">
+        <div class="card-header">
+            <span>🎭 МАСКИРОВКА</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>Стандартная</b> [4+] - наружное наблюдение</li>
+                <li><b>Средняя</b> [5+] - внедрение в банды</li>
+                <li><b>Гос.маскировка</b> [6+] - внедрение в госорганы</li>
+                <li>Запрещено использовать служебный транспорт</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- УКРОП-ПАТРУЛИ -->
+    <div class="card" data-category="tactics" data-search="укроп патруль растения">
+        <div class="card-header">
+            <span>🌿 УКРОП-ПАТРУЛИ</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>Проводятся раз в неделю по приказу</li>
+                <li>Все аресты на видео</li>
+                <li>Длительность ≥20 мин</li>
+                <li>Не более 1 патруля в день</li>
+                <li>Запрещены обыски на закрашенных территориях</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ПРОВЕРКИ -->
+    <div class="card" data-category="rules" data-search="проверки инспекция график">
+        <div class="card-header">
+            <span>🔍 ИНСПЕКЦИОННЫЕ ПРОВЕРКИ</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>ПН - Минюст</li>
+                <li>ВТ - Минобороны</li>
+                <li>СР - Минздрав</li>
+                <li>ЧТ - ГЦЛ</li>
+                <li>ПТ - Правительство</li>
+                <li>СБ - ФБР / внеплановые</li>
+                <li>ВС - внеплановые</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ПРОЦЕССУАЛЬНЫЕ ДЕЙСТВИЯ -->
+    <div class="card" data-category="rules" data-search="процедуры задержание допрос ордер миранда">
+        <div class="card-header">
+            <span>⚖️ ПРОЦЕДУРЫ</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>Осмотр места</b> - сбор улик</li>
+                <li><b>Задержание</b> - 3+ агента, ордер, правило Миранды</li>
+                <li><b>Допрос</b> - включить запись, зачитать Миранду</li>
+                <li><b>Меры пресечения</b> - СИЗО (3 дня), подписка, залог</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- СИСТЕМА CJIS -->
+    <div class="card" data-category="codes" data-search="cjis ngi ncic nics ucrs">
+        <div class="card-header">
+            <span>💻 СИСТЕМА CJIS</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>NGI</b> - биометрия, отпечатки, лица</li>
+                <li><b>NCIC</b> - база преступлений, угонов, пропавших</li>
+                <li><b>NICS</b> - проверка при покупке оружия</li>
+                <li><b>UCRS</b> - статистика преступности</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ЭКСПЕРТИЗЫ -->
+    <div class="card" data-category="tactics" data-search="экспертиза баллистика дактилоскопия">
+        <div class="card-header">
+            <span>🔬 ЭКСПЕРТИЗЫ</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>Баллистическая</li>
+                <li>Дактилоскопическая</li>
+                <li>Трасологическая</li>
+                <li>Химическая</li>
+                <li>Медицинская</li>
+                <li>Видеотехническая</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ТЭН-КОДЫ -->
+    <div class="card" data-category="codes" data-search="10-0 10-1 10-2 10-3 10-4 10-5 10-6 10-7 10-8 10-9 10-10 10-11 10-12 10-13 10-14 10-15 10-18 10-20 10-21 10-27 10-28 10-29 10-30 10-36 10-37 10-38 10-39 10-40 10-46 10-52 10-53 10-55 10-57 10-66 10-71 10-72 10-73 10-74 10-87 10-88 10-90 10-99">
+        <div class="card-header">
+            <span>📟 ТЭН-КОДЫ (10-КОДЫ)</span>
+            <span class="badge">38 КОДОВ</span>
+        </div>
+        <div class="card-body">
+            <div class="code-grid">
+                <div class="code-item"><span class="code-val">10-0</span><span class="code-desc">Убийство</span></div>
+                <div class="code-item"><span class="code-val">10-1</span><span class="code-desc">Встреча</span></div>
+                <div class="code-item"><span class="code-val">10-2</span><span class="code-desc">В патруль</span></div>
+                <div class="code-item"><span class="code-val">10-3</span><span class="code-desc">Молчание</span></div>
+                <div class="code-item"><span class="code-val">10-4</span><span class="code-desc">Принято</span></div>
+                <div class="code-item"><span class="code-val">10-5</span><span class="code-desc">Повтори</span></div>
+                <div class="code-item"><span class="code-val">10-6</span><span class="code-desc">Не принято</span></div>
+                <div class="code-item"><span class="code-val">10-7</span><span class="code-desc">Ожидайте</span></div>
+                <div class="code-item"><span class="code-val">10-8</span><span class="code-desc">Занят</span></div>
+                <div class="code-item"><span class="code-val">10-9</span><span class="code-desc">Скрытый</span></div>
+                <div class="code-item"><span class="code-val">10-10</span><span class="code-desc">Замечен</span></div>
+                <div class="code-item"><span class="code-val">10-11</span><span class="code-desc">Свободен</span></div>
+                <div class="code-item"><span class="code-val">10-12</span><span class="code-desc">Вижу</span></div>
+                <div class="code-item"><span class="code-val">10-13</span><span class="code-desc">Напарник</span></div>
+                <div class="code-item"><span class="code-val">10-14</span><span class="code-desc">Инфо</span></div>
+                <div class="code-item"><span class="code-val">10-15</span><span class="code-desc">Арест</span></div>
+                <div class="code-item"><span class="code-val">10-18</span><span class="code-desc">Поддержка</span></div>
+                <div class="code-item"><span class="code-val">10-20</span><span class="code-desc">Локация</span></div>
+                <div class="code-item"><span class="code-val">10-21</span><span class="code-desc">Статус</span></div>
+                <div class="code-item"><span class="code-val">10-27</span><span class="code-desc">О человеке</span></div>
+                <div class="code-item"><span class="code-val">10-28</span><span class="code-desc">Об авто</span></div>
+                <div class="code-item"><span class="code-val">10-29</span><span class="code-desc">Ордер</span></div>
+                <div class="code-item"><span class="code-val">10-30</span><span class="code-desc">Обработан</span></div>
+                <div class="code-item"><span class="code-val">10-36</span><span class="code-desc">Помощь</span></div>
+                <div class="code-item"><span class="code-val">10-37</span><span class="code-desc">Смена отдела</span></div>
+                <div class="code-item"><span class="code-val">10-38</span><span class="code-desc">Прибыл</span></div>
+                <div class="code-item"><span class="code-val">10-39</span><span class="code-desc">Объединение</span></div>
+                <div class="code-item"><span class="code-val">10-40</span><span class="code-desc">Детектив</span></div>
+                <div class="code-item"><span class="code-val">10-46</span><span class="code-desc">Обыск</span></div>
+                <div class="code-item"><span class="code-val">10-52</span><span class="code-desc">Медики</span></div>
+                <div class="code-item"><span class="code-val">10-53</span><span class="code-desc">Эвакуатор</span></div>
+                <div class="code-item"><span class="code-val">10-55</span><span class="code-desc">Трафик-стоп</span></div>
+                <div class="code-item"><span class="code-val">10-57V</span><span class="code-desc">Погоня авто</span></div>
+                <div class="code-item"><span class="code-val">10-57F</span><span class="code-desc">Пешая</span></div>
+                <div class="code-item"><span class="code-val">10-66</span><span class="code-desc">Риск-стоп</span></div>
+                <div class="code-item"><span class="code-val">10-71</span><span class="code-desc">1 патруль</span></div>
+                <div class="code-item"><span class="code-val">10-72</span><span class="code-desc">2 патруля</span></div>
+                <div class="code-item"><span class="code-val">10-73</span><span class="code-desc">3 патруля</span></div>
+                <div class="code-item"><span class="code-val">10-74</span><span class="code-desc">4 патруля</span></div>
+                <div class="code-item"><span class="code-val">10-87</span><span class="code-desc">Подозреваемый убит</span></div>
+                <div class="code-item"><span class="code-val">10-88</span><span class="code-desc">Офицер убит</span></div>
+                <div class="code-item"><span class="code-val">10-90</span><span class="code-desc">Нарушение юрисдикции</span></div>
+                <div class="code-item"><span class="code-val">10-99</span><span class="code-desc">Урегулировано</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СИТУАЦИОННЫЕ КОДЫ -->
+    <div class="card" data-category="codes" data-search="code 1 2 3 4 5 6 7 8 10 12 20 30 37 100 tom">
+        <div class="card-header">
+            <span>🚨 СИТУАЦИОННЫЕ КОДЫ</span>
+            <span class="badge">25 КОДОВ</span>
+        </div>
+        <div class="card-body">
+            <div class="code-grid">
+                <div class="code-item"><span class="code-val">CODE 1</span><span class="code-desc">Поиск офицера</span></div>
+                <div class="code-item"><span class="code-val">CODE 2</span><span class="code-desc">Рутинный</span></div>
+                <div class="code-item"><span class="code-val">CODE 2 HIGH</span><span class="code-desc">Приоритетный</span></div>
+                <div class="code-item"><span class="code-val">CODE 3</span><span class="code-desc">Срочный (сирена)</span></div>
+                <div class="code-item"><span class="code-val">CODE 4</span><span class="code-desc">Окончено</span></div>
+                <div class="code-item"><span class="code-val">CODE 4 ADAM</span><span class="code-desc">Готовность</span></div>
+                <div class="code-item"><span class="code-val">CODE 5</span><span class="code-desc">Разъединение</span></div>
+                <div class="code-item"><span class="code-val">CODE 6</span><span class="code-desc">На ситуации</span></div>
+                <div class="code-item"><span class="code-val">CODE 6 ADAM</span><span class="code-desc">Нужна помощь</span></div>
+                <div class="code-item"><span class="code-val">CODE 6 CHARLES</span><span class="code-desc">Инфо о подозреваемом</span></div>
+                <div class="code-item"><span class="code-val">CODE 6 GEORGE</span><span class="code-desc">Банда</span></div>
+                <div class="code-item"><span class="code-val">CODE 6 MARY</span><span class="code-desc">Бой</span></div>
+                <div class="code-item"><span class="code-val">CODE 7</span><span class="code-desc">Обед</span></div>
+                <div class="code-item"><span class="code-val">CODE 8</span><span class="code-desc">Пожар</span></div>
+                <div class="code-item"><span class="code-val">CODE 10</span><span class="code-desc">Проверка</span></div>
+                <div class="code-item"><span class="code-val">CODE 12</span><span class="code-desc">Ложная тревога</span></div>
+                <div class="code-item"><span class="code-val">CODE 20</span><span class="code-desc">Для СМИ</span></div>
+                <div class="code-item"><span class="code-val">CODE 30</span><span class="code-desc">Сигнализация</span></div>
+                <div class="code-item"><span class="code-val">CODE 37</span><span class="code-desc">Угон</span></div>
+                <div class="code-item"><span class="code-val">CODE ROBERT RIFLE</span><span class="code-desc">Винтовка</span></div>
+                <div class="code-item"><span class="code-val">CODE ROBERT SLUG</span><span class="code-desc">Дробовик</span></div>
+                <div class="code-item"><span class="code-val">CODE TOM</span><span class="code-desc">TASER</span></div>
+                <div class="code-item"><span class="code-val">CODE 100</span><span class="code-desc">Пути под контролем</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SWAT -->
+    <div class="card" data-category="tactics" data-search="swat спецназ штурм заложники">
+        <div class="card-header">
+            <span>🔫 SWAT</span>
+            <span class="tag">ЭЛИТА</span>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li><b>Задачи:</b> Освобождение заложников, контртеррор, штурм</li>
+                <li><b>Обязанности:</b> Балаклава, позывной, знать Миранду</li>
+                <li><b>Разрешено:</b> Открывать огонь при угрозе</li>
+                <li><b>Запрещено:</b> Выезжать без балаклавы, связи с террористами</li>
+            </ul>
+            <div class="tactics-img"></div>
+        </div>
+    </div>
 </div>
 
-<div class="footer">
-    TERMINAL ACCESS GRANTED // NO LOGS RECORDED<br>
-    MESA REGIONAL OFFICE v2.6.0
+<div class="status-bar">
+    <div class="status-item"><span class="blink"></span> ONLINE</div>
+    <div class="status-item">👥 18 РАЗДЕЛОВ</div>
+    <div class="status-item">⚡ MESA • 2025</div>
 </div>
 
 <script>
-    function toggle(header) {
-        const card = header.parentElement;
-        card.classList.toggle('active');
-        const span = header.querySelector('span');
-        span.innerText = card.classList.contains('active') ? '[ - ]' : '[ + ]';
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+
+    function switchTab(cat) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        document.querySelectorAll('.card').forEach(c => {
+            if (cat === 'all' || c.dataset.category === cat) {
+                c.style.display = 'block';
+            } else {
+                c.style.display = 'none';
+            }
+        });
     }
 
-    function filter() {
-        let input = document.getElementById('searchInput').value.toLowerCase();
-        let cards = document.getElementsByClassName('card');
-        
-        for (let i = 0; i < cards.length; i++) {
-            let tags = cards[i].getAttribute('data-tags').toLowerCase();
-            let header = cards[i].querySelector('.card-header').innerText.toLowerCase();
-            if (tags.includes(input) || header.includes(input)) {
-                cards[i].style.display = "";
-            } else {
-                cards[i].style.display = "none";
-            }
-        }
+    function filterContent() {
+        const val = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.card').forEach(c => {
+            const searchData = (c.dataset.search + c.innerText).toLowerCase();
+            c.style.display = searchData.includes(val) ? 'block' : 'none';
+        });
     }
+
+    // Показываем все карточки при загрузке
+    document.querySelectorAll('.card').forEach(c => c.style.display = 'block');
 </script>
 
 </body>
