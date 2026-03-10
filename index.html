@@ -3,192 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FBI/SWAT Tactical Terminal</title>
+    <title>FBI/SWAT MESA TERMINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00d4ff;
-            --secondary: #0055ff;
-            --bg: #050a12;
-            --glass: rgba(15, 25, 45, 0.85);
-            --border: rgba(0, 212, 255, 0.3);
+            --bg: #03070b;
+            --card-bg: rgba(16, 23, 36, 0.9);
+            --border: rgba(0, 212, 255, 0.2);
         }
 
         body {
             background: var(--bg);
-            color: #e0e0e0;
+            color: #d1d9e0;
             font-family: 'Roboto Mono', monospace;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 50%, #0a192f 0%, #050a12 100%);
+            background-image: linear-gradient(to bottom, #050a12, #000);
         }
 
         header {
-            padding: 20px;
+            padding: 25px;
             text-align: center;
-            border-bottom: 2px solid var(--primary);
-            background: rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            border-bottom: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.8);
         }
 
         h1 {
             font-family: 'Orbitron', sans-serif;
             margin: 0;
-            letter-spacing: 3px;
             color: var(--primary);
-            text-shadow: 0 0 10px var(--primary);
-            font-size: 1.5rem;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+            font-size: 1.4rem;
         }
 
-        .search-box {
+        .search-container {
             padding: 15px;
             position: sticky;
             top: 0;
-            z-index: 100;
             background: var(--bg);
+            z-index: 10;
         }
 
-        input {
+        #searchInput {
             width: 100%;
-            padding: 12px;
-            background: var(--glass);
+            padding: 14px;
+            background: #0d1117;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            color: white;
+            border-radius: 4px;
+            color: #fff;
+            font-family: inherit;
             box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
         }
 
-        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .container { padding: 10px; max-width: 900px; margin: auto; }
 
-        .container { padding: 10px; max-width: 800px; margin: auto; }
+        .section-title {
+            font-family: 'Orbitron';
+            font-size: 0.8rem;
+            color: #586069;
+            margin: 20px 0 10px 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
         .card {
-            background: var(--glass);
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            transition: 0.2s;
         }
 
         .card-header {
             padding: 15px;
-            background: rgba(0, 212, 255, 0.1);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: bold;
-            border-bottom: 1px solid transparent;
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.03);
         }
 
-        .card-header:hover { background: rgba(0, 212, 255, 0.2); }
+        .card-header:hover { background: rgba(0, 212, 255, 0.08); }
 
         .card-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-            padding: 0 15px;
-            font-size: 0.9rem;
+            display: none;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
             line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .card.active .card-content { max-height: 2000px; padding: 15px; }
-        .card.active .card-header { border-bottom-color: var(--border); }
+        .card.active .card-content { display: block; }
 
-        .code-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .code-tag { color: var(--primary); font-weight: bold; }
-
-        .footer { text-align: center; padding: 20px; font-size: 0.7rem; opacity: 0.5; }
+        .tag { color: var(--primary); font-weight: bold; margin-right: 10px; }
         
-        .tab-btn {
-            background: none; border: 1px solid var(--primary); color: var(--primary);
-            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Orbitron';
-            margin: 5px; transition: 0.3s;
-        }
-        .tab-btn.active { background: var(--primary); color: var(--bg); }
+        .sub-header { color: var(--primary); border-bottom: 1px solid var(--border); margin-top: 15px; padding-bottom: 5px; font-weight: bold; }
+
+        .flex-row { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 4px 0; }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 5px; }
+
+        .footer { text-align: center; padding: 30px; font-size: 0.6rem; color: #444; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>FEDERAL TERMINAL v2.0</h1>
-    <p style="font-size: 0.7rem; color: #888;">MESA REGIONAL OFFICE // SECURED ACCESS</p>
+    <h1>CENTRAL DATABASE :: MESA</h1>
+    <div style="font-size: 0.7rem; color: var(--primary); margin-top: 5px; opacity: 0.7;">REGIONAL OFFICE FBI & SWAT ACCESS ONLY</div>
 </header>
 
-<div class="search-box">
-    <input type="text" id="searchInput" placeholder="Поиск по кодам или протоколам..." onkeyup="filterContent()">
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Введите запрос (код, тактика, устав)..." onkeyup="filter()">
 </div>
 
-<div class="container" id="mainContainer">
-    <div class="card" data-title="тен коды ситуационные">
-        <div class="card-header" onclick="toggleCard(this)">📟 ТЕН-КОДЫ И СИТУАЦИИ <span>+</span></div>
+<div class="container">
+    
+    <div class="section-title">Common Protocols</div>
+
+    <div class="card" data-tags="коды тен тэн ситуации">
+        <div class="card-header" onclick="toggle(this)">📟 ТЕН-КОДЫ И МАРКИРОВКИ <span>[+]</span></div>
         <div class="card-content">
-            <div class="code-item"><span class="code-tag">10-0</span> <span>Убийство</span></div>
-            <div class="code-item"><span class="code-tag">10-4</span> <span>Принято</span></div>
-            <div class="code-item"><span class="code-tag">10-15</span> <span>Проводится арест</span></div>
-            <div class="code-item"><span class="code-tag">10-55</span> <span>Трафик-стоп</span></div>
-            <div class="code-item"><span class="code-tag">10-99</span> <span>Ситуация урегулирована</span></div>
-            <hr style="border: 0.5px solid var(--border); margin: 15px 0;">
-            <div class="code-item"><span class="code-tag">CODE 3</span> <span>Срочный вызов (сирены)</span></div>
-            <div class="code-item"><span class="code-tag">CODE 4</span> <span>Помощь не требуется</span></div>
+            <div class="flex-row"><span class="tag">10-1</span><span>Встреча всех юнитов</span></div>
+            <div class="flex-row"><span class="tag">10-4</span><span>Сообщение принято</span></div>
+            <div class="flex-row"><span class="tag">10-6</span><span>Занят (не принимаю вызовы)</span></div>
+            <div class="flex-row"><span class="tag">10-15</span><span>Подозреваемый задержан</span></div>
+            <div class="flex-row"><span class="tag">10-20</span><span>Локация</span></div>
+            <div class="flex-row"><span class="tag">10-21</span><span>Запрос статуса юнита</span></div>
+            <div class="flex-row"><span class="tag">10-57 V/F</span><span>Погоня (Vehicle / Foot)</span></div>
+            <div class="flex-row"><span class="tag">10-70</span><span>Запрос поддержки (Back-up)</span></div>
+            <div class="flex-row"><span class="tag">10-99</span><span>Ситуация урегулирована</span></div>
+            <div class="sub-header">Ситуационные коды</div>
+            <div class="flex-row"><span class="tag">CODE 2</span><span>Срочный вызов (без сирен)</span></div>
+            <div class="flex-row"><span class="tag">CODE 3</span><span>Экстренный вызов (сирены+свет)</span></div>
+            <div class="flex-row"><span class="tag">CODE 4</span><span>Помощь не требуется</span></div>
         </div>
     </div>
 
-    <div class="card" data-title="тактика штурм swat">
-        <div class="card-header" onclick="toggleCard(this)">⚔️ ТАКТИКА ШТУРМА (SWAT) <span>+</span></div>
+    <div class="section-title">S.W.A.T. Section</div>
+
+    <div class="card" data-tags="сват swat тактика штурм зачистка крючок крест">
+        <div class="card-header" onclick="toggle(this)">⚔️ ТАКТИКА ШТУРМА И ЗАЧИСТКИ <span>[+]</span></div>
         <div class="card-content">
-            <p><b>Крючок:</b> Вход по дуге. Бойцы одновременно встают на колено и зачищают углы.</p>
-            <p><b>Крест-на-крест:</b> Бойцы пересекают проем по диагонали, нависая друг над другом.</p>
-            <p><b>Диагональ:</b> Бойцы встают спиной к стене, контролируя всё помещение.</p>
+            <div class="sub-header">Методы проникновения</div>
+            <p><b>«Крючок»:</b> Применяется при широких дверях. Бойцы одновременно заходят, пригибаясь и контролируя свои углы.</p>
+            <p><b>«Крест»:</b> Бойцы входят один за другим по диагонали, «зачищая» мертвые зоны почти одновременно.</p>
+            <p><b>«Угол»:</b> №1 выбирает направление, №2 подстраивается под него.</p>
+            <div class="sub-header">Перемещение</div>
+            <p><b>«Лист клевера»:</b> Треугольный строй (Лидер + 2 партнера). Оси визирования пересекаются, секторы огня накладываются.</p>
+            <p><b>«Растекание»:</b> Бойцы распределяются вдоль стен помещения для полного контроля.</p>
+            <p><b>Работа со щитом:</b> Группа до 5 человек следует за щитовиком с минимальной дистанцией.</p>
         </div>
     </div>
 
-    <div class="card" data-title="инструкции фбр правила">
-        <div class="card-header" onclick="toggleCard(this)">🛡️ ВНУТРЕННИЕ ИНСТРУКЦИИ FBI <span>+</span></div>
+    <div class="card" data-tags="переговоры заложники сват swat">
+        <div class="card-header" onclick="toggle(this)">🎤 ПЕРЕГОВОРЫ ПРИ ЗАХВАТЕ <span>[+]</span></div>
         <div class="card-content">
-            <p><b>1.1.</b> Инструкции обязательны для всех сотрудников.</p>
-            <p><b>3.6.</b> Запрещено играть в казино и находиться на рынках в рабочее время.</p>
-            <p><b>5.1.</b> Подчинение только руководству ФБР и Губернатору.</p>
+            <p><b>Цели:</b> Сохранение жизни заложников, получение инфо о преступниках, выигрыш времени.</p>
+            <div class="sub-header">Этапы:</div>
+            <ul>
+                <li>Обобщение информации и установление контакта.</li>
+                <li>«Захват позиций» (психологическое воздействие).</li>
+                <li>Торг и обсуждение условий.</li>
+                <li>Достижение соглашения / Анализ.</li>
+            </ul>
         </div>
     </div>
+
+    <div class="section-title">FBI Section</div>
+
+    <div class="card" data-tags="устав фбр правила обязанности права">
+        <div class="card-header" onclick="toggle(this)">🛡️ ВНУТРЕННИЙ УСТАВ FBI <span>[+]</span></div>
+        <div class="card-content">
+            <div class="sub-header">Общие запреты</div>
+            <ul>
+                <li>Связи с преступными группировками.</li>
+                <li>Нахождение на ЦР/АБ/Казино в форме (кроме рейдов).</li>
+                <li>Неадекватное поведение, использование мата.</li>
+                <li>Хранение/сбыт запрещенных веществ.</li>
+            </ul>
+            <div class="sub-header">Субординация</div>
+            <p>Агент обязан беспрекословно выполнять приказы руководства (Директор, Зам, Куратор). Младший состав подчиняется старшему.</p>
+        </div>
+    </div>
+
+    <div class="card" data-tags="ранги должности сват swat">
+        <div class="card-header" onclick="toggle(this)">📊 ИЕРАРХИЯ (SWAT/FBI) <span>[+]</span></div>
+        <div class="card-content">
+            <div class="sub-header">Структура S.W.A.T.</div>
+            <div class="flex-row"><span>Куратор SWAT</span><span class="tag">TOP</span></div>
+            <div class="flex-row"><span>Зам. Куратора</span><span></span></div>
+            <div class="flex-row"><span>Старший инструктор</span><span></span></div>
+            <div class="flex-row"><span>Оператор</span><span></span></div>
+            <div class="flex-row"><span>Академист</span><span></span></div>
+            <div class="sub-header">Отделы FBI</div>
+            <p><b>CID:</b> Криминальный следственный отдел.</p>
+            <p><b>OPR:</b> Отдел профессиональной ответственности (инспекции).</p>
+            <p><b>NSB:</b> Совет национальной безопасности.</p>
+        </div>
+    </div>
+
 </div>
 
 <div class="footer">
-    © 2026 MESA DOJ // ENCRYPTED DATA CHANNEL
+    TERMINAL ACCESS GRANTED // NO LOGS RECORDED<br>
+    MESA REGIONAL OFFICE v2.6.0
 </div>
 
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-50.mp3"></audio>
-
 <script>
-    function toggleCard(header) {
-        const sound = document.getElementById('clickSound');
-        sound.currentTime = 0;
-        sound.volume = 0.2;
-        sound.play();
-
+    function toggle(header) {
         const card = header.parentElement;
         card.classList.toggle('active');
-        header.querySelector('span').innerText = card.classList.contains('active') ? '-' : '+';
+        const span = header.querySelector('span');
+        span.innerText = card.classList.contains('active') ? '[ - ]' : '[ + ]';
     }
 
-    function filterContent() {
+    function filter() {
         let input = document.getElementById('searchInput').value.toLowerCase();
         let cards = document.getElementsByClassName('card');
-
+        
         for (let i = 0; i < cards.length; i++) {
-            let title = cards[i].getAttribute('data-title').toLowerCase();
-            if (title.includes(input)) {
+            let tags = cards[i].getAttribute('data-tags').toLowerCase();
+            let header = cards[i].querySelector('.card-header').innerText.toLowerCase();
+            if (tags.includes(input) || header.includes(input)) {
                 cards[i].style.display = "";
             } else {
                 cards[i].style.display = "none";
