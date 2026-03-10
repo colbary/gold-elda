@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBI/SWAT Tactical Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #0055ff;
+            --bg: #050a12;
+            --glass: rgba(15, 25, 45, 0.85);
+            --border: rgba(0, 212, 255, 0.3);
+        }
+
+        body {
+            background: var(--bg);
+            color: #e0e0e0;
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #0a192f 0%, #050a12 100%);
+        }
+
+        header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .search-box {
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+        .container { padding: 10px; max-width: 800px; margin: auto; }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .card-header {
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            border-bottom: 1px solid transparent;
+        }
+
+        .card-header:hover { background: rgba(0, 212, 255, 0.2); }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            padding: 0 15px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .card.active .card-content { max-height: 2000px; padding: 15px; }
+        .card.active .card-header { border-bottom-color: var(--border); }
+
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .code-tag { color: var(--primary); font-weight: bold; }
+
+        .footer { text-align: center; padding: 20px; font-size: 0.7rem; opacity: 0.5; }
+        
+        .tab-btn {
+            background: none; border: 1px solid var(--primary); color: var(--primary);
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Orbitron';
+            margin: 5px; transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary); color: var(--bg); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>FEDERAL TERMINAL v2.0</h1>
+    <p style="font-size: 0.7rem; color: #888;">MESA REGIONAL OFFICE // SECURED ACCESS</p>
+</header>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Поиск по кодам или протоколам..." onkeyup="filterContent()">
+</div>
+
+<div class="container" id="mainContainer">
+    <div class="card" data-title="тен коды ситуационные">
+        <div class="card-header" onclick="toggleCard(this)">📟 ТЕН-КОДЫ И СИТУАЦИИ <span>+</span></div>
+        <div class="card-content">
+            <div class="code-item"><span class="code-tag">10-0</span> <span>Убийство</span></div>
+            <div class="code-item"><span class="code-tag">10-4</span> <span>Принято</span></div>
+            <div class="code-item"><span class="code-tag">10-15</span> <span>Проводится арест</span></div>
+            <div class="code-item"><span class="code-tag">10-55</span> <span>Трафик-стоп</span></div>
+            <div class="code-item"><span class="code-tag">10-99</span> <span>Ситуация урегулирована</span></div>
+            <hr style="border: 0.5px solid var(--border); margin: 15px 0;">
+            <div class="code-item"><span class="code-tag">CODE 3</span> <span>Срочный вызов (сирены)</span></div>
+            <div class="code-item"><span class="code-tag">CODE 4</span> <span>Помощь не требуется</span></div>
+        </div>
+    </div>
+
+    <div class="card" data-title="тактика штурм swat">
+        <div class="card-header" onclick="toggleCard(this)">⚔️ ТАКТИКА ШТУРМА (SWAT) <span>+</span></div>
+        <div class="card-content">
+            <p><b>Крючок:</b> Вход по дуге. Бойцы одновременно встают на колено и зачищают углы.</p>
+            <p><b>Крест-на-крест:</b> Бойцы пересекают проем по диагонали, нависая друг над другом.</p>
+            <p><b>Диагональ:</b> Бойцы встают спиной к стене, контролируя всё помещение.</p>
+        </div>
+    </div>
+
+    <div class="card" data-title="инструкции фбр правила">
+        <div class="card-header" onclick="toggleCard(this)">🛡️ ВНУТРЕННИЕ ИНСТРУКЦИИ FBI <span>+</span></div>
+        <div class="card-content">
+            <p><b>1.1.</b> Инструкции обязательны для всех сотрудников.</p>
+            <p><b>3.6.</b> Запрещено играть в казино и находиться на рынках в рабочее время.</p>
+            <p><b>5.1.</b> Подчинение только руководству ФБР и Губернатору.</p>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    © 2026 MESA DOJ // ENCRYPTED DATA CHANNEL
+</div>
+
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-50.mp3"></audio>
+
+<script>
+    function toggleCard(header) {
+        const sound = document.getElementById('clickSound');
+        sound.currentTime = 0;
+        sound.volume = 0.2;
+        sound.play();
+
+        const card = header.parentElement;
+        card.classList.toggle('active');
+        header.querySelector('span').innerText = card.classList.contains('active') ? '-' : '+';
+    }
+
+    function filterContent() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('card');
+
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getAttribute('data-title').toLowerCase();
+            if (title.includes(input)) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
